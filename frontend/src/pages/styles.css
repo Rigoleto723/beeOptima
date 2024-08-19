@@ -1,0 +1,179 @@
+.type-column {
+  padding: 10px;
+}
+
+.type-text {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.type-action-buttons {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  align-items: center; 
+}
+
+.type-action-buttons .edit-button,
+.type-action-buttons .delete-button, 
+.type-action-buttons .view-button {
+  color:#bbb8b8;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.type-action-buttons .view-button:hover {
+  color: #1eff00; /* Cambia esto al color que prefieras */
+}
+
+.type-action-buttons .edit-button:hover {
+  color: #007bff; /* Cambia esto al color que prefieras */
+}
+
+.type-action-buttons .delete-button:hover {
+  color: #ff002b; /* Cambia esto al color que prefieras */
+}
+
+/* Estilos para el modal */
+.ReactModal__Overlay {
+  background-color: rgba(0, 0, 0, 0.75) !important;
+}
+
+.ReactModal__Content {
+  top: 50% !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  margin-right: -50% !important;
+  transform: translate(-50%, -50%) !important;
+  padding: 20px !important;
+  border-radius: 10px !important;
+}
+
+.action-list a, .action-list button {
+  color: inherit; /* Use this to make the icon inherit the text color */
+  text-decoration: none;
+  background: none; /* Remove default button styling */
+  border: none; /* Remove default button styling */
+  cursor: pointer; /* Make it look like a clickable element */
+}
+
+.action-list a:hover, .action-list button:hover {
+  color: #009879; /* Change color on hover */
+}
+
+.equipment-list-container {
+  position: relative;
+}
+
+.add-button-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.add-button {
+  display: inline-flex;
+  align-items: center;
+  background-color: #009879;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  float: right;
+}
+
+.add-button:hover {
+  background-color: #007f67;
+}
+
+.action-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center; /* Centra los iconos horizontalmente */
+  align-items: center; /* Centra los iconos verticalmente */
+}
+
+.action-list li {
+  margin-bottom: 5px;
+}
+
+.action-list li:last-of-type {
+  margin-bottom: 0;
+}
+
+.action-list a {
+  color: inherit; /* Use this to make the icon inherit the text color */
+  text-decoration: none;
+}
+
+.action-list a:hover {
+  color: #009879; /* Change color on hover */
+}
+
+.equipment-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+  }
+  
+  .equipment-table thead tr {
+    background-color: #063b8b;
+    color: #ffffff;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .equipment-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+    color: #ffffff;
+  }
+  
+.equipment-table tbody tr:last-of-type {
+  border-bottom: 1px solid #dddddd;
+}
+
+  
+  .equipment-table tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+  }
+
+    
+  .equipment-table th,
+  .equipment-table td {
+    padding: 12px 15px;
+    border: 1px solid #dddddd;
+  }
+
+  .equipment-table td.spec-list {
+    padding: 0;
+}
+  .equipment-table td.spec-list ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .equipment-table td.spec-list li {
+    list-style-type: none;
+    border-bottom: 1px solid #dddddd;
+    padding: 8px 10px;
+    margin: 0;
+    box-sizing: border-box; 
+  }
+  
+  .equipment-table td.spec-list li:last-child {
+    border-bottom: none; 
+}
