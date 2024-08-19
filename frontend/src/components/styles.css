@@ -1,0 +1,62 @@
+.modal.show {
+    display: block;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050;
+    width: auto; /* Ajusta según tus necesidades */
+    max-width: 600px; /* Ajusta según tus necesidades */
+}
+
+.custom-modal .modal-dialog {
+    max-width: 90% !important;
+    width: auto !important;
+}
+
+.custom-modal .modal-content {
+    background-color: #333 !important; 
+    color: #fff !important; 
+    border-radius: 10px !important;
+}
+
+.custom-modal .modal-header,
+.custom-modal .modal-footer {
+    border: none !important;
+}
+
+.custom-modal .modal-body {
+    padding: 20px !important;
+}
+
+.custom-modal-footer {
+    border-top: none !important;
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #fff;
+    background-color: #343a40; 
+    border-color: #454d55; 
+}
+
+.table th,
+.table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #454d55;
+}
+
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #454d55;
+}
+
+.table tbody + tbody {
+    border-top: 2px solid #454d55;
+}
+
+.table .table {
+    background-color: #343a40;
+}
