@@ -25,14 +25,13 @@ class ColonyMonitoring(models.Model):
     datetime = models.DateTimeField()
     temperature = models.FloatField()
     relative_humidity = models.FloatField()
-    apparent_temperature = models.FloatField()
     ambient_temperature = models.FloatField()
     ambient_humidity = models.FloatField()
-    temperature_difference = models.FloatField()
-    apparent_temperature_difference = models.FloatField()
+    weight = models.FloatField()
 
     def __str__(self):
         return f'Monitoring on {self.datetime} for {self.colony}'
+
 
 # Tabla Pollen_Production
 class PollenProduction(models.Model):
@@ -40,10 +39,6 @@ class PollenProduction(models.Model):
     year = models.IntegerField()
     season = models.CharField(max_length=50)
     total_pollen = models.FloatField()  # en kg
-    pollen_quality = models.CharField(max_length=50)
-    stocks = models.FloatField()  # en kg
-    price_per_kg = models.FloatField()
-    production_value = models.FloatField()
 
     def __str__(self):
         return f'Production {self.year} for {self.colony}'
