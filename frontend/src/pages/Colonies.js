@@ -26,7 +26,7 @@ function Colonies() {
     const [colonyNumber, setColonyNumber] = useState('');
     const [colonyHealth, setColonyHealth] = useState('');
     const [numOfBees, setNumOfBees] = useState('');
-    const [queenPresent, setQueenPresent] = useState('');
+    const [queenPresent, setQueenPresent] = useState(true);
 
     const openDeleteModal = (id, colonyNumber) => {
         setId(id);
@@ -90,16 +90,20 @@ function Colonies() {
             <table className="equipment-table">
                 <thead>
                 <tr>
+                    <th>Colmena</th>
                     <th>Numero Colonia</th>
                     <th>Salud Colonia</th>
                     <th>Numero de Abejas</th>
-                    <th>ReinaColonia</th>
+                    <th>Reina Presente</th>
                     <th>Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
                     {colony.map(item => (
                         <tr key={item.id}>
+                            <td className="type-column">
+                                <span className="type-text">{item.hive}</span>
+                            </td>
                             <td className="type-column">
                                 <span className="type-text">{item.colony_number}</span>
                             </td>
