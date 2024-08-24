@@ -1,21 +1,23 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import client from '../axiosConfig';
 
 const useHive = () => {
     const [hives, setHives] = useState([]);
 
     const reloadHive = () => {
-        axios.get('http://127.0.0.1:8000/api/hives/')
-        .then(({ data }) => {
-            setHives(data);
-        });
-        console.log('Datos de la colmena desde reload', hives)
+        client
+            .get('/api/hives/')
+            .then(({ data }) => {
+                setHives(data);
+            });
+            console.log('Datos de la colmena desde reload', hives)
     };
 
     const fetchHive = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:8000/api/hives/');
-            setHives(response.data);
+            const response = await client
+                .get('/api/hives/');
+                setHives(response.data);
         } catch (error) {
             console.error('Error fetching Hive:', error);
         }
@@ -26,8 +28,9 @@ const useHive = () => {
     const createHive = async (newHive) => {
         console.log('Datos desde createHive', newHive)
         try {
-            const response = await axios.post('http://127.0.0.1:8000/api/hives/', newHive);
-            setHives((prevHive) => [...prevHive, response.data]);
+            const response = await client
+                .post('/api/hives/', newHive);
+                setHives((prevHive) => [...prevHive, response.data]);
         } catch (error) {
             console.error('Error creating Hive:', error);
         }
@@ -35,8 +38,9 @@ const useHive = () => {
 
     const deleteHive = async (id) => {
         try {
-            await axios.delete(`http://127.0.0.1:8000/api/hives/${id}/`);
-            setHives((prevHive) => prevHive.filter((item) => item.id !== id));
+            await client.
+                delete(`/api/hives/${id}/`);
+                setHives((prevHive) => prevHive.filter((item) => item.id !== id));
         } catch (error) {
             console.error('Failed to delete Hive', error);
         }
@@ -44,13 +48,14 @@ const useHive = () => {
 
     const editHive = async (updatedHive) => {
         try {
-            const response = await axios.put(
-                `http://127.0.0.1:8000/api/hives/${updatedHive.id}/`,
-                updatedHive
-            );
-            setHives((prevHive) =>
-                prevHive.map((item) => (item.id === updatedHive.id ? response.data : item))
-            );
+            const response = await client
+                .put(
+                    `/api/hives/${updatedHive.id}/`,
+                    updatedHive
+                );
+                setHives((prevHive) =>
+                    prevHive.map((item) => (item.id === updatedHive.id ? response.data : item))
+                );
         } catch (error) {
             console.error('Error editing Hive:', error);
         }

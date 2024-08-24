@@ -1,5 +1,6 @@
 import { IconPencil, IconPlus, IconTrash, IconBuildingStore, IconRotateClockwise } from '@tabler/icons-react';
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './styles.css';
@@ -19,7 +20,8 @@ const HeaderBtn = ({ onClick }) => (
 
 function ColonyMonitoring() {
 
-    const { monitoring, createMonitoring, deleteMonitoring, editMonitoring, reloadMonitoring } = useMonitoring();
+    const { colonyId } = useParams();
+    const { monitoring, createMonitoring, deleteMonitoring, editMonitoring, reloadMonitoring } = useMonitoring(colonyId);
     const { colony } = useColony();
     const [showModalDeleted, setShowModalDeleted] = useState(false);
     const [showModalCreatedMonitoring, setShowModalCreateMonitoring] = useState(false);
@@ -33,11 +35,11 @@ function ColonyMonitoring() {
     const [ambientHumidity, setAmbientHumidity] = useState('');
     const [weight, setWeight] = useState('');
 
-    const openDeleteModal = (id, colonyNumber) => {
-        setId(id);
-        setColonyNumber(colonyNumber);
+    const openDeleteModal = () => {
+        console.log(`el id antes de setear el id de eliminacion es: ${id}`);
+
         setShowModalDeleted(true);
-        console.log(`Eliminando el elemento con id: ${id} y nombre: ${colonyNumber}`);
+        console.log(`Eliminando el monitoreo con id: ${id}`);
     };
 
     const handleDelete = async () => {
@@ -47,7 +49,6 @@ function ColonyMonitoring() {
         setShowModalDeleted(false);
         setId('');
         setColonyNumber('');
-
         setColonyTemperature('');
         setColonyHumidity('');
         setAmbientTemperature('');
@@ -59,10 +60,10 @@ function ColonyMonitoring() {
     const handleCreateMonitoring = async () => {
         console.log("Creating Colony:", colonyNumber);
         await createMonitoring({
-            colony: colonyNumber,
+            colony: colonyId,
             datetime: date,
-            temperature: colonyTemperature,
-            relative_humidity: colonyHumidity,
+            colony_temperature: colonyTemperature,
+            colony_humidity: colonyHumidity,
             ambient_temperature: ambientTemperature,
             ambient_humidity: ambientHumidity,
             weight: weight,
@@ -85,8 +86,8 @@ function ColonyMonitoring() {
             id: id,
             colony: colonyNumber,
             datetime: date,
-            temperature: colonyTemperature,
-            relative_humidity: colonyHumidity,
+            colony_temperature: colonyTemperature,
+            colony_humidity: colonyHumidity,
             ambient_temperature: ambientTemperature,
             ambient_humidity: ambientHumidity,
             weight: weight,
@@ -129,15 +130,15 @@ function ColonyMonitoring() {
                                 <span className="type-text">{item.colony}</span>
                             </td>
                             <td className="type-column">
-                                {item.temperature ? (
-                                    <span className="type-text">{item.temperature}</span>
+                                {item.colony_temperature ? (
+                                    <span className="type-text">{item.colony_temperature}</span>
                                 ) : (
                                     <span className="type-text">Sin Información</span>
                                 )}
                             </td>
                             <td className="type-column">
-                                {item.relative_humidity ? (
-                                    <span className="type-text">{item.relative_humidity}</span>
+                                {item.colony_humidity ? (
+                                    <span className="type-text">{item.colony_humidity}</span>
                                 ) : (
                                     <span className="type-text">Sin Información</span>
                                 )}
@@ -168,17 +169,20 @@ function ColonyMonitoring() {
                                         <button onClick={() => {
                                             setShowModalUpdateMonitoring(true); 
                                             setId(item.id);
-                                            setColonyNumber(item.colony_number); 
                                             setDate(item.datetime);
-                                            setColonyTemperature(item.temperature);
-                                            setColonyHumidity(item.relative_humidity);
+                                            setColonyTemperature(item.colony_temperature);
+                                            setColonyHumidity(item.colony_humidity);
                                             setAmbientTemperature(item.ambient_temperature);
                                             setAmbientHumidity(item.ambient_humidity);
                                             setWeight(item.weight);
                                             }} className="edit-button" >
                                             <IconPencil />
                                         </button>
-                                        <button className="delete-button" onClick={() => openDeleteModal(item.id, item.colony_number)}>
+                                        <button className="delete-button" onClick={() => {
+                                            setId(item.id);
+                                            setShowModalDeleted(true);
+                                            
+                                            }}>
                                             <IconTrash />
                                         </button>
                                     </div>
@@ -201,12 +205,9 @@ function ColonyMonitoring() {
                 </button>}
         >
                 <div>
-                    <label>Nombre de la Colonia</label>
+                    <label>ID de la Colonia</label>
                     <input
-                        value={colonyNumber}
-                        onChange={(e) => {
-                            setColonyNumber(e.target.value);
-                        }}
+                        value={colonyId}
                     >
                     </input>
 
@@ -278,9 +279,9 @@ function ColonyMonitoring() {
                 </button>}
         >
                 <div>
-                    <label>Nombre de la Colonia</label>
+                    <label>ID de la Colonia</label>
                     <input
-                        value={colonyNumber}
+                        value={colonyId}
                         onChange={(e) => {
                             setColonyNumber(e.target.value);
                         }}
@@ -347,7 +348,7 @@ function ColonyMonitoring() {
             onClose={() => setShowModalDeleted(false)}
             onConfirm={handleDelete}
             title="Confirmar Eliminación"
-            body={`¿Está seguro que desea eliminar el elemento "${id}"?`}
+            body={`¿Está seguro que desea eliminar el monitoreo con ID "${id}"?`}
         />
     </div>
     );

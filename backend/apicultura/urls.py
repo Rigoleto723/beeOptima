@@ -1,5 +1,9 @@
 from django.urls import path
-from .views import HiveList, HiveDetail, ColonyList, ColonyDetail, ColonyMonitoringList, ColonyMonitoringDetail, PollenProductionList, PollenProductionDetail
+from .views import HiveList, HiveDetail, ColonyList, ColonyDetail, ColonyMonitoringList, ColonyMonitoringDetail 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('hives/', HiveList.as_view(), name='hive-list'),
@@ -8,6 +12,6 @@ urlpatterns = [
     path('colonies/<int:pk>/', ColonyDetail.as_view(), name='colony-detail'),
     path('colony-monitorings/', ColonyMonitoringList.as_view(), name='colony-monitoring-list'),
     path('colony-monitorings/<int:pk>/', ColonyMonitoringDetail.as_view(), name='colony-monitoring-detail'),
-    path('pollen-productions/', PollenProductionList.as_view(), name='pollen-production-list'),
-    path('pollen-productions/<int:pk>/', PollenProductionDetail.as_view(), name='pollen-production-detail'),
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
