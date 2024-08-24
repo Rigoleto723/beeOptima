@@ -1,5 +1,6 @@
-import { IconPencil, IconPlus, IconTrash, IconBuildingStore, IconRotateClockwise } from '@tabler/icons-react';
+import { IconPencil, IconPlus, IconTrash, IconBuildingStore, IconEye, IconRotateClockwise } from '@tabler/icons-react';
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './styles.css';
 import ConfirmationModal from '../components/ConfirmationModal';
 import GeneralModal from '../components/GeneralModal';
@@ -26,7 +27,12 @@ function Colonies() {
     const [colonyNumber, setColonyNumber] = useState('');
     const [colonyHealth, setColonyHealth] = useState('');
     const [numOfBees, setNumOfBees] = useState('');
-    const [queenPresent, setQueenPresent] = useState(true);
+    const [queenPresent, setQueenPresent] = useState('');
+    const navigate = useNavigate();
+
+    const handleViewDetails = (colonyId) => {
+      navigate(`/app/colony-monitorings/${colonyId}`);
+    };
 
     const openDeleteModal = (id, colonyNumber) => {
         setId(id);
@@ -102,34 +108,45 @@ function Colonies() {
                     {colony.map(item => (
                         <tr key={item.id}>
                             <td className="type-column">
-                                <span className="type-text">{item.hive}</span>
+                                <span className="type-text">{item.hive_name}</span>
                             </td>
                             <td className="type-column">
                                 <span className="type-text">{item.colony_number}</span>
                             </td>
-                            <td className="type-column">
-                                {item.colony_health && item.colony_health.length > 0 ? (
-                                        <span className="type-text">{item.colony_health}</span>
-                                ) : (
+                            {item.status_history.length > 0 ? (
+                                <>
+                                    <td className="type-column">
+                                        <span className="type-text">{item.status_history[item.status_history.length - 1].colony_health}</span>
+                                    </td>
+                                    <td className="type-column">
+                                        <span className="type-text">{item.status_history[item.status_history.length - 1].num_of_bees}</span>
+                                    </td>
+                                    <td className="type-column">
+                                        <span className="type-text">
+                                            {item.status_history[item.status_history.length - 1].queen_present ? 'Sí' : 'No'}
+                                        </span>
+                                    </td>
+                                </>
+                            ) : (
+                                <>
+                                    <td className="type-column">
                                         <span className="type-text">Sin Información</span>
-                                )}
-                            </td>
-                            <td className="type-column">
-                                {item.num_of_bees ? (
-                                    <span className="type-text">{item.num_of_bees}</span>
-                                ) : (
-                                    <span className="type-text">Sin Información</span>
-                                )}
-                            </td>
-                            <td className="type-column">
-                                {item.queen_present !== null ? (
-                                    <span className="type-text">{item.queen_present ? 'Sí' : 'No'}</span>
-                                ) : (
-                                    <span className="type-text">Sin Información</span>
-                                )}
-                            </td>
+                                    </td>
+                                    <td className="type-column">
+                                        <span className="type-text">Sin Información</span>
+                                    </td>
+                                    <td className="type-column">
+                                        <span className="type-text">Sin Información</span>
+                                    </td>
+                                </>
+                            )}
                             <td className="type-column">
                                     <div className="type-action-buttons">
+                                        <button onClick={() => 
+                                            handleViewDetails(item.id)} 
+                                            className="edit-button">
+                                                <IconEye />
+                                        </button>
                                         <button onClick={() => {
                                             setShowModalUpdateColony(true); 
                                             setId(item.id);
@@ -192,11 +209,12 @@ function Colonies() {
                 </div>
                 <div>
                     <label>Salud de la Colonia</label>
-                    <input 
-                        type="text" 
-                        value={colonyHealth} 
-                        onChange={(e) => setColonyHealth(e.currentTarget.value)}
-                    />
+                    <select value={colonyHealth} onChange={(e) => setColonyHealth(e.currentTarget.value)}>
+                        <option value="">Seleccione una opción</option>
+                        <option value="Saludable">Saludable</option>
+                        <option value="Débil">Débil</option>
+                        <option value="Muerta">Muerta</option>
+                    </select>
                 </div>
                 <div>
                     <label>Numero de Abejas</label>
@@ -212,6 +230,7 @@ function Colonies() {
                         value={queenPresent}
                         onChange={(e) => setQueenPresent(e.currentTarget.value === "true")}
                     >
+                        <option value="">Seleccione una opción</option>
                         <option value="true">Sí</option>
                         <option value="false">No</option>
                     </select>

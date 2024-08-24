@@ -2,6 +2,7 @@ import { IconReportMedical, IconTools, IconBuildingStore, IconBrandProducthunt, 
 import React from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.jpg";
+import useAuth from '../hooks/useAuth';
 import "./styles.css"
 
 
@@ -18,16 +19,6 @@ const sidebarList = [
         path: '/app/colonies',
     },
     {
-        icon: <IconBrandProducthunt />,
-        name: 'Produccion Polen',
-        path: '/app/pollen-productions',
-    },
-    {
-        icon: <IconBrandProducthunt />,
-        name: 'Monitoreo Colonias',
-        path: '/app/colony-monitorings',
-    },
-    {
         icon: <IconTools />,
         name: 'Dashboard',
         path: '/app/dashboard',
@@ -37,6 +28,7 @@ const sidebarList = [
 const MainLayout = () => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
+    const { logout } = useAuth();
 
     return (
         <div className="main-layout-container">
@@ -53,6 +45,15 @@ const MainLayout = () => {
                             </div>
                         </li>
                     ))}
+                    <li key="logout" onClick={() => {
+                        logout();  // Llama a la función logout del hook useAuth
+                        navigate('/login');  // Redirige a la página de inicio de sesión
+                    }} className="sidebar-item p-2 cursor-pointer hover:bg-gray-700">
+                        <div className="flex items-center space-x-2">
+                            <IconTools />
+                            <span>Cerrar Sesión</span>
+                        </div>
+                    </li>
                 </ul>
             </div>
             <div className="content bg-gray-100">
