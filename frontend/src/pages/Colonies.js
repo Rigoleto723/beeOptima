@@ -84,7 +84,7 @@ function Colonies() {
         setShowModalUpdateColony(false);
         setId('');
         setColonyNumber('');
-        setColonyHealth('')
+        setColonyHealth('');
         setNumOfBees('');
         setQueenPresent('');
         reloadColony();
@@ -249,20 +249,59 @@ function Colonies() {
                 </button>}
         >
                 <div>
+                    <label>Nombre de la Colmena</label>
+                    <select
+                        value={hive}
+                        onChange={(e) => {
+                            setHive(e.target.value);
+                        }}
+                    >
+                        <option value="">Seleccione una opción</option>
+                        {hives
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map(b => (
+                            <option key={b.id} value={b.id}>
+                                {b.name}
+                            </option>
+                        ))}
+                    </select>
+
+                </div>
+                <div>
                     <label>Numero de la Colonia</label>
                     <input 
                         type="text" 
-                        value={colonyNumber} 
+                        value={colonyNumber}
                         onChange={(e) => setColonyNumber(e.currentTarget.value)}
                     />
                 </div>
                 <div>
                     <label>Salud de la Colonia</label>
+                    <select value={colonyHealth} onChange={(e) => setColonyHealth(e.currentTarget.value)}>
+                        <option value="">Seleccione una opción</option>
+                        <option value="Saludable">Saludable</option>
+                        <option value="Débil">Débil</option>
+                        <option value="Muerta">Muerta</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Numero de Abejas</label>
                     <input 
                         type="text" 
-                        value={colonyHealth} 
-                        onChange={(e) => setColonyHealth(e.currentTarget.value)}
+                        value={numOfBees} 
+                        onChange={(e) => setNumOfBees(e.currentTarget.value)}
                     />
+                </div>
+                <div>
+                    <label>Reina Presente</label>
+                    <select
+                        value={queenPresent}
+                        onChange={(e) => setQueenPresent(e.currentTarget.value === "true")}
+                    >
+                        <option value="">Seleccione una opción</option>
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                    </select>
                 </div>
         </GeneralModal>
         <ConfirmationModal

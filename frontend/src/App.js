@@ -35,7 +35,7 @@ function App() {
                         <Route path="/app" element={<MainLayout />} >
                             <Route path="hives" element={<Hives />} />
                             <Route path="colonies" element={<Colonies />} />
-                            <Route path="colony-monitorings" element={<ColonyMonitoring />} />
+                            <Route path="/app/colony-monitorings/:colonyId" element={<ColonyMonitoring />} />
                             <Route path="dashboard" element={<Dashboard />} />
                         </Route>
                         <Route path="*" element={<Navigate to="/app/hives" />} />

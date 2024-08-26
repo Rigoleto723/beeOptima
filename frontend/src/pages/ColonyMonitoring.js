@@ -1,5 +1,6 @@
 import { IconPencil, IconPlus, IconTrash, IconBuildingStore, IconRotateClockwise } from '@tabler/icons-react';
 import React, { useState, useEffect } from 'react';
+import { utils, writeFile } from 'xlsx';
 import { useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -9,12 +10,14 @@ import GeneralModal from '../components/GeneralModal';
 import RouteLayout from '../layouts/RouteLayout';
 import useColony from '../hooks/useColony';
 import useMonitoring from '../hooks/useColonyMonitoring';
+import client from "../axiosConfig";
 
 
 
-const HeaderBtn = ({ onClick }) => (
-    <div className='h-full flex flex-row items-center pr-4'>
-        <button className='add-button' onClick={onClick}><IconBuildingStore />Añadir Nuevo Registro</button>
+const HeaderBtn = ({ onCreate, onDownload }) => (
+    <div className='header-buttons-container'>
+        <button className='add-button' onClick={onCreate}><IconBuildingStore />Añadir Nuevo Registro</button>
+        <button className='add-button' onClick={onDownload}><IconBuildingStore />Descargar Reporte</button>
     </div>
 )
 
@@ -34,7 +37,42 @@ function ColonyMonitoring() {
     const [ambientTemperature, setAmbientTemperature] = useState('');
     const [ambientHumidity, setAmbientHumidity] = useState('');
     const [weight, setWeight] = useState('');
+    const [colonyStatus, setColonyStatus] = useState(null);
 
+    useEffect(() => {
+        client.get(`/api/colony-status/${colonyId}/latest/`)
+            .then(response => {
+                setColonyStatus(response.data);
+                console("Estado de la colinia : ", colonyStatus)
+            })
+            .catch(error => {
+                console.error("Error fetching colony status", error);
+            });
+    }, [colonyId]);
+    
+    // Función para manejar la descarga de datos
+    const handleDownloadReport = () => {
+        // Estructura de los datos que deseas descargar
+        const data = monitoring.map(item => ({
+            Fecha: item.datetime,
+            Colonia: item.colony,
+            'Temperatura de la Colonia': item.colony_temperature || 'Sin Información',
+            'Humedad de la Colonia': item.colony_humidity || 'Sin Información',
+            'Temperatura Ambiente': item.ambient_temperature || 'Sin Información',
+            'Humedad Ambiente': item.ambient_humidity || 'Sin Información',
+            Peso: item.weight || 'Sin Información'
+        }));
+
+        // Crear hoja de trabajo
+        const worksheet = utils.json_to_sheet(data);
+
+        // Crear libro de trabajo
+        const workbook = utils.book_new();
+        utils.book_append_sheet(workbook, worksheet, 'Monitoreo de Colonias');
+
+        // Guardar el archivo Excel
+        writeFile(workbook, 'ReporteMonitoreoColonias.xlsx');
+    };
     const openDeleteModal = () => {
         console.log(`el id antes de setear el id de eliminacion es: ${id}`);
 
@@ -106,7 +144,13 @@ function ColonyMonitoring() {
 
     return (
     <div>
-        <RouteLayout title='Lista de Colonias' icon={<IconBuildingStore />} headerItem={<HeaderBtn onClick={() => setShowModalCreateMonitoring(true)} />}>
+        <RouteLayout title='Lista de Colonias' icon={<IconBuildingStore />} headerItem={<HeaderBtn onCreate={() => setShowModalCreateMonitoring(true)} onDownload={handleDownloadReport} />}>
+            <h3>Colmena:</h3><label>{colonyStatus ? colonyStatus.colony_name : 'Datos no disponibles'}</label>
+            <h3>Colonia:</h3><label>{colonyStatus ? colonyStatus.colony : 'Datos no disponibles'}</label>
+            <h3>Estado de Salud:</h3><label>{colonyStatus ? colonyStatus.colony_health : 'Datos no disponibles'}</label>
+            <h3>Numero de Abejas:</h3><label>{colonyStatus ? colonyStatus.num_of_bees : 'Datos no disponibles'}</label>
+            <h3>Reina Presente:</h3><label>{colonyStatus ? (colonyStatus.queen_present ? 'Sí' : 'No') : 'Datos no disponibles'}</label>
+            
             <table className="equipment-table">
                 <thead>
                 <tr>

@@ -15,7 +15,7 @@ const useColony = () => {
 
     const fetchColony = async () => {
         try {
-            const response = await         client
+            const response = await client
             .get('/api/colonies/');
             setColony(response.data);
         } catch (error) {
@@ -28,7 +28,7 @@ const useColony = () => {
     const createColony = async (newColony) => {
         console.log('Datos desde createHive', newColony)
         try {
-            const response = await         client
+            const response = await client
             .post('/api/colonies/', newColony);
             setColony((prevColony) => [...prevColony, response.data]);
         } catch (error) {

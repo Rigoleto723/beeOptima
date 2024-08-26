@@ -20,7 +20,7 @@ const sidebarList = [
     },
     {
         icon: <IconTools />,
-        name: 'Dashboard',
+        name: 'Reportes',
         path: '/app/dashboard',
     }
 ];

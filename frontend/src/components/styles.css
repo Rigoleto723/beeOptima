@@ -9,6 +9,14 @@
     max-width: 600px; /* Ajusta según tus necesidades */
 }
 
+.custom-modal-title {
+    font-size: 1.25rem;  /* Aumenta ligeramente el tamaño de la fuente */
+    font-weight: bold;   /* Hace que el texto sea más grueso */
+    color: #f8f9fa;      /* Cambia el color del texto a un tono más claro */
+    border-bottom: 2px solid #444; /* Añade una línea de separación */
+    padding-bottom: 10px; /* Añade espacio entre el título y el contenido */
+    margin-bottom: 10px; /* Espacio adicional debajo del título */
+}
 .custom-modal .modal-dialog {
     max-width: 90% !important;
     width: auto !important;
@@ -29,6 +37,25 @@
     padding: 20px !important;
 }
 
+.custom-modal .modal-body input {
+    background-color: #444 !important; /* Fondo oscuro para los campos de entrada */
+    color: #fff !important;            /* Texto blanco para visibilidad */
+    border: 1px solid #555 !important; /* Bordes con un color gris más oscuro */
+    border-radius: 5px !important;     /* Bordes redondeados */
+    padding: 10px !important;          /* Espaciado interno */
+    width: 100%;                       /* Para que el campo ocupe todo el ancho disponible */
+    box-sizing: border-box;            /* Para incluir padding en el ancho total */
+}
+
+.custom-modal .modal-body select {
+    background-color: #444 !important; /* Fondo oscuro similar al input */
+    color: #fff !important; /* Texto blanco para visibilidad */
+    border: 1px solid #555 !important; /* Bordes con un color gris más oscuro */
+    border-radius: 5px !important; /* Bordes redondeados */
+    padding: 10px !important; /* Espaciado interno */
+    width: 100%; /* Para que el campo ocupe todo el ancho disponible */
+    box-sizing: border-box; /* Para incluir padding en el ancho total */
+}
 .custom-modal-footer {
     border-top: none !important;
 }
@@ -59,4 +86,42 @@
 
 .table .table {
     background-color: #343a40;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.btn-container {
+    display: flex;
+    justify-content: space-between; /* Espacio entre los botones */
+    width: 100%; /* Asegura que los botones ocupen todo el ancho del contenedor */
+    padding: 0 10px; /* Ajusta el padding según sea necesario */
+}
+
+.btn-container .btn-secondary, .btn-container .btn-danger {
+    flex: 1; /* Opcional: para que los botones tengan el mismo tamaño */
+    margin: 0 5px; /* Añade margen entre los botones */
 }

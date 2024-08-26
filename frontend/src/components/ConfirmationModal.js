@@ -4,16 +4,18 @@ import { Modal, Button } from 'react-bootstrap';
 
 const ConfirmationModal = ({ show, onClose, onConfirm, title, body }) => {
     return (
-        <Modal show={show} onHide={onClose} centered>
+        <Modal show={show} onHide={onClose} centered dialogClassName="custom-modal">
             <Modal.Header closeButton>
-                <Modal.Title>{title}</Modal.Title>
+                <Modal.Title className="custom-modal-title">{title}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <p>{body}</p>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onClose}>Cancelar</Button>
-                <Button variant="danger" onClick={onConfirm}>Eliminar</Button>
+                <div className="btn-container">
+                    <Button className="btn-secondary" onClick={onClose}>Cancelar</Button>
+                    <Button className="btn-danger" onClick={onConfirm}>Eliminar</Button>
+                </div>
             </Modal.Footer>
         </Modal>
     );
