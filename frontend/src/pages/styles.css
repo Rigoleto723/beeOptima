@@ -177,3 +177,22 @@
   .equipment-table td.spec-list li:last-child {
     border-bottom: none; 
 }
+
+.btn-done {
+  background-color: #35dc43;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-done:hover {
+  background-color: #26a831;
+}
+
+.header-buttons-container {
+  display: flex;
+  gap: 10px; /* Espacio entre los botones */
+  align-items: center; /* Alinear verticalmente en el centro */
+}

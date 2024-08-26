@@ -13,13 +13,17 @@ const GeneralModal = ({ isOpen, onClose, title, children, footerActions }) => {
             dialogClassName="custom-modal"
         >
             <Modal.Header closeButton className="custom-modal-header">
-            <Modal.Title>{title}</Modal.Title>
+            <Modal.Title className="custom-modal-title" >{title}</Modal.Title>
             </Modal.Header>
             <Modal.Body className="custom-modal-body">
             {children}
             </Modal.Body>
             <Modal.Footer className="custom-modal-footer">
-            {footerActions}
+            <div className="btn-container">
+                <Button className="btn-secondary" onClick={onClose}>Cancelar</Button>
+                <Button className="btn-done">{footerActions}</Button>
+            </div>
+            
             </Modal.Footer>
         </Modal>
     );
