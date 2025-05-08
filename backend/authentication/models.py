@@ -1,37 +1,41 @@
 from django.db import models
-from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
+from django.contrib.auth.models import AbstractUser
 
-class AppUserManager(BaseUserManager):
-    def create_user(self, username, password=None, group_name='Cashier'):
-        if not password:
-            raise ValueError('A password is required.')
-        group = Group.objects.get(name=group_name)
-        user = self.model(username=username)
-        user.set_password(password)
-        user.save()
-        user.groups.add(group)
-        return user
+class CustomUser(AbstractUser):
+    pass
+    STATUS_CHOICES = [
+        ("active", "Activo"),
+        ("inactive", "Inactivo"),
+    ]
 
-    def create_superuser(self, username, password=None):
-        if not password:
-            raise ValueError('A password is required.')
-        user = self.create_user(username, password)
-        user.is_superuser = True
-        user.save()
-        return user
-
-class AppUser(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(max_length=50, primary_key=True)
-    name = models.CharField(max_length=256)
-    surname = models.CharField(max_length=256)
-    group = models.CharField(max_length=50, null=True, blank=True)
+    username = models.CharField(max_length=15, unique=True)
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
+    email = models.EmailField(unique=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="active")
     
-    USERNAME_FIELD = 'username'
-    objects = AppUserManager()
-
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = ["email", "first_name", "last_name",]
+    
     def __str__(self):
-        return self.username
-
-    def get_full_name(self):
-        return self.name + ' ' + self.surname
+        return f"{self.username} ({', '.join([group.name for group in self.groups.all()])})"
+    
+    def reset_password(self):
+        """Restablece la contraseña del usuario a la predeterminada y marca que debe cambiarse."""
+        self.set_password("12345678")
+        self.must_change_password = True
+        self.save()
+    
+    def change_password(self, old_password, new_password, confirm_password):
+        """Permite al usuario cambiar su contraseña si introduce la actual correctamente."""
+        if not self.check_password(old_password):
+            raise ValueError("La contraseña actual es incorrecta.")
+        if new_password != confirm_password:
+           raise ValueError("Las nuevas contraseñas no coinciden.")
+        if len(new_password) < 8:
+            raise ValueError("La nueva contraseña debe tener al menos 8 caracteres.")
+        self.set_password(new_password)
+        self.save()
+    
+    def has_role(self, role_name):
+        return self.groups.filter(name=role_name).exists()

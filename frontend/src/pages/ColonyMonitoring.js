@@ -40,16 +40,26 @@ function ColonyMonitoring() {
     const [colonyStatus, setColonyStatus] = useState(null);
 
     useEffect(() => {
-        client.get(`/api/colony-status/${colonyId}/latest/`)
+        client.get(`/api/colonies/${colonyId}/`)
             .then(response => {
-                setColonyStatus(response.data);
-                console("Estado de la colinia : ", colonyStatus)
+                const colonyData = response.data;
+                // Obtener el último estado de la colonia
+                if (colonyData.status_history && colonyData.status_history.length > 0) {
+                    const latestStatus = colonyData.status_history[0]; // El primer elemento es el más reciente
+                    setColonyStatus({
+                        colony_name: colonyData.hive_name,
+                        colony: colonyData.colony_number,
+                        colony_health: latestStatus.colony_health,
+                        num_of_bees: latestStatus.num_of_bees,
+                        queen_present: latestStatus.queen_present
+                    });
+                }
             })
             .catch(error => {
                 console.error("Error fetching colony status", error);
             });
     }, [colonyId]);
-    
+
     // Función para manejar la descarga de datos
     const handleDownloadReport = () => {
         // Estructura de los datos que deseas descargar
@@ -143,75 +153,117 @@ function ColonyMonitoring() {
     };
 
     return (
-    <div>
-        <RouteLayout title='Lista de Colonias' icon={<IconBuildingStore />} headerItem={<HeaderBtn onCreate={() => setShowModalCreateMonitoring(true)} onDownload={handleDownloadReport} />}>
-            <h3>Colmena:</h3><label>{colonyStatus ? colonyStatus.colony_name : 'Datos no disponibles'}</label>
-            <h3>Colonia:</h3><label>{colonyStatus ? colonyStatus.colony : 'Datos no disponibles'}</label>
-            <h3>Estado de Salud:</h3><label>{colonyStatus ? colonyStatus.colony_health : 'Datos no disponibles'}</label>
-            <h3>Numero de Abejas:</h3><label>{colonyStatus ? colonyStatus.num_of_bees : 'Datos no disponibles'}</label>
-            <h3>Reina Presente:</h3><label>{colonyStatus ? (colonyStatus.queen_present ? 'Sí' : 'No') : 'Datos no disponibles'}</label>
-            
-            <table className="equipment-table">
-                <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Colonia</th>
-                    <th>Temperatura de la Colonia</th>
-                    <th>Humedad de la Colonia</th>
-                    <th>Temperatura Ambiente</th>
-                    <th>Humedad Ambiente</th>
-                    <th>Peso</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody>
-                    {monitoring.map(item => (
-                        <tr key={item.id}>
-                            <td className="type-column">
-                                <span className="type-text">{item.datetime}</span>
-                            </td>
-                            <td className="type-column">
-                                <span className="type-text">{item.colony}</span>
-                            </td>
-                            <td className="type-column">
-                                {item.colony_temperature ? (
-                                    <span className="type-text">{item.colony_temperature}</span>
-                                ) : (
-                                    <span className="type-text">Sin Información</span>
-                                )}
-                            </td>
-                            <td className="type-column">
-                                {item.colony_humidity ? (
-                                    <span className="type-text">{item.colony_humidity}</span>
-                                ) : (
-                                    <span className="type-text">Sin Información</span>
-                                )}
-                            </td>
-                            <td className="type-column">
-                                {item.ambient_temperature ? (
-                                    <span className="type-text">{item.ambient_temperature}</span>
-                                ) : (
-                                    <span className="type-text">Sin Información</span>
-                                )}
-                            </td>
-                            <td className="type-column">
-                                {item.ambient_humidity ? (
-                                    <span className="type-text">{item.ambient_humidity}</span>
-                                ) : (
-                                    <span className="type-text">Sin Información</span>
-                                )}
-                            </td>
-                            <td className="type-column">
-                                {item.weight ? (
-                                    <span className="type-text">{item.weight}</span>
-                                ) : (
-                                    <span className="type-text">Sin Información</span>
-                                )}
-                            </td>
-                            <td className="type-column">
+        <div>
+            <RouteLayout title='Lista de Colonias' icon={<IconBuildingStore />} headerItem={<HeaderBtn onCreate={() => setShowModalCreateMonitoring(true)} onDownload={handleDownloadReport} />}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-white/10 backdrop-blur-lg rounded-xl shadow-lg border border-white/20">
+                    <div className="space-y-4">
+                        <div className="flex flex-col">
+                            <h3 className="text-sm font-medium text-gray-400 mb-1">Colmena:</h3>
+                            <label className="text-lg font-semibold text-white">
+                                {colonyStatus ? colonyStatus.colony_name : 'Datos no disponibles'}
+                            </label>
+                        </div>
+
+                        <div className="flex flex-col">
+                            <h3 className="text-sm font-medium text-gray-400 mb-1">Colonia:</h3>
+                            <label className="text-lg font-semibold text-white">
+                                {colonyStatus ? colonyStatus.colony : 'Datos no disponibles'}
+                            </label>
+                        </div>
+
+                        <div className="flex flex-col">
+                            <h3 className="text-sm font-medium text-gray-400 mb-1">Estado de Salud:</h3>
+                            <label className={`text-lg font-semibold ${colonyStatus ?
+                                colonyStatus.colony_health === "Saludable" ? 'text-green-400' :
+                                    colonyStatus.colony_health === "Débil" ? 'text-yellow-400' :
+                                        'text-red-400'
+                                : 'text-gray-400'
+                                }`}>
+                                {colonyStatus ? colonyStatus.colony_health : 'Datos no disponibles'}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="flex flex-col">
+                            <h3 className="text-sm font-medium text-gray-400 mb-1">Número de Abejas:</h3>
+                            <label className="text-lg font-semibold text-white">
+                                {colonyStatus ? colonyStatus.num_of_bees.toLocaleString() : 'Datos no disponibles'}
+                            </label>
+                        </div>
+
+                        <div className="flex flex-col">
+                            <h3 className="text-sm font-medium text-gray-400 mb-1">Reina Presente:</h3>
+                            <label className={`text-lg font-semibold text-white ${colonyStatus ?
+                                colonyStatus.queen_present ? 'text-green-400' : 'text-red-400'
+                                : 'text-gray-400'
+                                }`}>
+                                {colonyStatus ? (colonyStatus.queen_present ? 'Sí' : 'No') : 'Datos no disponibles'}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <table className="equipment-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Colonia</th>
+                            <th>Temperatura de la Colonia</th>
+                            <th>Humedad de la Colonia</th>
+                            <th>Temperatura Ambiente</th>
+                            <th>Humedad Ambiente</th>
+                            <th>Peso</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {monitoring.map(item => (
+                            <tr key={item.id}>
+                                <td className="type-column">
+                                    <span className="type-text">{item.datetime}</span>
+                                </td>
+                                <td className="type-column">
+                                    <span className="type-text">{item.colony}</span>
+                                </td>
+                                <td className="type-column">
+                                    {item.colony_temperature ? (
+                                        <span className="type-text">{item.colony_temperature}</span>
+                                    ) : (
+                                        <span className="type-text">Sin Información</span>
+                                    )}
+                                </td>
+                                <td className="type-column">
+                                    {item.colony_humidity ? (
+                                        <span className="type-text">{item.colony_humidity}</span>
+                                    ) : (
+                                        <span className="type-text">Sin Información</span>
+                                    )}
+                                </td>
+                                <td className="type-column">
+                                    {item.ambient_temperature ? (
+                                        <span className="type-text">{item.ambient_temperature}</span>
+                                    ) : (
+                                        <span className="type-text">Sin Información</span>
+                                    )}
+                                </td>
+                                <td className="type-column">
+                                    {item.ambient_humidity ? (
+                                        <span className="type-text">{item.ambient_humidity}</span>
+                                    ) : (
+                                        <span className="type-text">Sin Información</span>
+                                    )}
+                                </td>
+                                <td className="type-column">
+                                    {item.weight ? (
+                                        <span className="type-text">{item.weight}</span>
+                                    ) : (
+                                        <span className="type-text">Sin Información</span>
+                                    )}
+                                </td>
+                                <td className="type-column">
                                     <div className="type-action-buttons">
                                         <button onClick={() => {
-                                            setShowModalUpdateMonitoring(true); 
+                                            setShowModalUpdateMonitoring(true);
                                             setId(item.id);
                                             setDate(item.datetime);
                                             setColonyTemperature(item.colony_temperature);
@@ -219,35 +271,35 @@ function ColonyMonitoring() {
                                             setAmbientTemperature(item.ambient_temperature);
                                             setAmbientHumidity(item.ambient_humidity);
                                             setWeight(item.weight);
-                                            }} className="edit-button" >
+                                        }} className="edit-button" >
                                             <IconPencil />
                                         </button>
                                         <button className="delete-button" onClick={() => {
                                             setId(item.id);
                                             setShowModalDeleted(true);
-                                            
-                                            }}>
+
+                                        }}>
                                             <IconTrash />
                                         </button>
                                     </div>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </RouteLayout>
-        <GeneralModal
-            isOpen={showModalCreatedMonitoring}
-            onClose={() => setShowModalCreateMonitoring(false)}
-            title="Crear Registro"
-            footerActions={
-                <button
-                    type="button"
-                    onClick={handleCreateMonitoring}
-                >
-                Crear
-                </button>}
-        >
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </RouteLayout>
+            <GeneralModal
+                isOpen={showModalCreatedMonitoring}
+                onClose={() => setShowModalCreateMonitoring(false)}
+                title="Crear Registro"
+                footerActions={
+                    <button
+                        type="button"
+                        onClick={handleCreateMonitoring}
+                    >
+                        Crear
+                    </button>}
+            >
                 <div>
                     <label>ID de la Colonia</label>
                     <input
@@ -271,32 +323,32 @@ function ColonyMonitoring() {
                 </div>
                 <div>
                     <label>Temperatura de la Colonia</label>
-                    <input 
-                        type="text" 
-                        value={colonyTemperature} 
+                    <input
+                        type="text"
+                        value={colonyTemperature}
                         onChange={(e) => setColonyTemperature(e.currentTarget.value)}
                     />
                 </div>
                 <div>
                     <label>Humedad de la Colonia</label>
-                    <input 
-                        type="text" 
-                        value={colonyHumidity} 
+                    <input
+                        type="text"
+                        value={colonyHumidity}
                         onChange={(e) => setColonyHumidity(e.currentTarget.value)}
                     />
                 </div>
                 <div>
                     <label>Temperatura Ambiente</label>
-                    <input 
-                        type="text" 
-                        value={ambientTemperature} 
+                    <input
+                        type="text"
+                        value={ambientTemperature}
                         onChange={(e) => setAmbientTemperature(e.currentTarget.value)}
                     />
                 </div>
                 <div>
                     <label>Humedad Ambiente</label>
                     <input
-                        type="text" 
+                        type="text"
                         value={ambientHumidity}
                         onChange={(e) => setAmbientHumidity(e.currentTarget.value)}
                     />
@@ -304,24 +356,24 @@ function ColonyMonitoring() {
                 <div>
                     <label>Peso</label>
                     <input
-                        type="text" 
+                        type="text"
                         value={weight}
                         onChange={(e) => setWeight(e.currentTarget.value)}
                     />
                 </div>
-        </GeneralModal>
-        <GeneralModal
-            isOpen={ShowModalUpdateMonitoring}
-            onClose={() => setShowModalUpdateMonitoring(false)}
-            title="Editar Registro"
-            footerActions={
-                <button
-                    type="button"
-                    onClick={handleUpdateMonitoring}
-                >
-                Actualizar
-                </button>}
-        >
+            </GeneralModal>
+            <GeneralModal
+                isOpen={ShowModalUpdateMonitoring}
+                onClose={() => setShowModalUpdateMonitoring(false)}
+                title="Editar Registro"
+                footerActions={
+                    <button
+                        type="button"
+                        onClick={handleUpdateMonitoring}
+                    >
+                        Actualizar
+                    </button>}
+            >
                 <div>
                     <label>ID de la Colonia</label>
                     <input
@@ -348,32 +400,32 @@ function ColonyMonitoring() {
                 </div>
                 <div>
                     <label>Temperatura de la Colonia</label>
-                    <input 
-                        type="text" 
-                        value={colonyTemperature} 
+                    <input
+                        type="text"
+                        value={colonyTemperature}
                         onChange={(e) => setColonyTemperature(e.currentTarget.value)}
                     />
                 </div>
                 <div>
                     <label>Humedad de la Colonia</label>
-                    <input 
-                        type="text" 
-                        value={colonyHumidity} 
+                    <input
+                        type="text"
+                        value={colonyHumidity}
                         onChange={(e) => setColonyHumidity(e.currentTarget.value)}
                     />
                 </div>
                 <div>
                     <label>Temperatura Ambiente</label>
-                    <input 
-                        type="text" 
-                        value={ambientTemperature} 
+                    <input
+                        type="text"
+                        value={ambientTemperature}
                         onChange={(e) => setAmbientTemperature(e.currentTarget.value)}
                     />
                 </div>
                 <div>
                     <label>Humedad Ambiente</label>
                     <input
-                        type="text" 
+                        type="text"
                         value={ambientHumidity}
                         onChange={(e) => setAmbientHumidity(e.currentTarget.value)}
                     />
@@ -381,20 +433,20 @@ function ColonyMonitoring() {
                 <div>
                     <label>Peso</label>
                     <input
-                        type="text" 
+                        type="text"
                         value={weight}
                         onChange={(e) => setWeight(e.currentTarget.value)}
                     />
                 </div>
-        </GeneralModal>
-        <ConfirmationModal
-            show={showModalDeleted}
-            onClose={() => setShowModalDeleted(false)}
-            onConfirm={handleDelete}
-            title="Confirmar Eliminación"
-            body={`¿Está seguro que desea eliminar el monitoreo con ID "${id}"?`}
-        />
-    </div>
+            </GeneralModal>
+            <ConfirmationModal
+                show={showModalDeleted}
+                onClose={() => setShowModalDeleted(false)}
+                onConfirm={handleDelete}
+                title="Confirmar Eliminación"
+                body={`¿Está seguro que desea eliminar el monitoreo con ID "${id}"?`}
+            />
+        </div>
     );
 }
 

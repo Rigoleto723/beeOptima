@@ -1,11 +1,10 @@
-import { IconReportMedical, IconTools, IconBuildingStore, IconBrandProducthunt, IconFileText } from "@tabler/icons-react";
+import { IconReportMedical, IconTools, IconBuildingStore, IconBrandProducthunt, IconFileText, IconLogout } from "@tabler/icons-react";
 import React from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.jpg";
-import useAuth from '../hooks/useAuth';
 import "./styles.css"
-
-
+import client from "../axiosConfig";
+import { useSession } from '../context/sessionContext';
 const sidebarList = [
     {
         icon: <IconReportMedical />,
@@ -28,7 +27,29 @@ const sidebarList = [
 const MainLayout = () => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
-    const { logout } = useAuth();
+    const { logout } = useSession();
+
+    const handleLogout = () => {
+        // Limpiar localStorage y sessionStorage
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // Limpiar el sessionId del contexto
+        logout();
+
+        // Intentar cerrar sesión en el servidor
+        client.post('/api/auth/logout/')
+            .then(() => {
+                console.log('Sesión cerrada exitosamente en el servidor');
+            })
+            .catch((error) => {
+                console.error('Error al cerrar sesión en el servidor:', error);
+            })
+            .finally(() => {
+                // Redireccionar al login con recarga completa
+                window.location.href = '/login';
+            });
+    }
 
     return (
         <div className="main-layout-container">
@@ -45,12 +66,9 @@ const MainLayout = () => {
                             </div>
                         </li>
                     ))}
-                    <li key="logout" onClick={() => {
-                        logout();  // Llama a la función logout del hook useAuth
-                        navigate('/login');  // Redirige a la página de inicio de sesión
-                    }} className="sidebar-item p-2 cursor-pointer hover:bg-gray-700">
+                    <li onClick={handleLogout} className="sidebar-item p-2 cursor-pointer hover:bg-gray-700">
                         <div className="flex items-center space-x-2">
-                            <IconTools />
+                            <IconLogout />
                             <span>Cerrar Sesión</span>
                         </div>
                     </li>
