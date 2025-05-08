@@ -1,16 +1,9 @@
-import { IconBuildingStore, IconTemperature, IconDroplet, IconScale, IconChartBar } from '@tabler/icons-react';
+import { IconTools } from '@tabler/icons-react';
 import React, { useState, useEffect } from 'react';
-import { Card, Title, Text, Tab, TabList, TabGroup, TabPanel, TabPanels, Grid, Col, Metric, AreaChart, BarChart } from '@tremor/react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar } from 'recharts';
-import './styles.css';
 import RouteLayout from '../layouts/RouteLayout';
 import client from '../axiosConfig';
 
-const HeaderBtn = ({ onClick }) => (
-    <div className='h-full flex flex-row items-center pr-4'>
-        <button className='add-button' onClick={onClick}><IconBuildingStore />Generar Reporte</button>
-    </div>
-)
 
 function Dashboard() {
     const [colonies, setColonies] = useState([]);
@@ -63,14 +56,16 @@ function Dashboard() {
     const latestStatus = selectedColonyObj && selectedColonyObj.status_history && selectedColonyObj.status_history.length > 0
         ? selectedColonyObj.status_history[selectedColonyObj.status_history.length - 1]
         : null;
+    // Formatear fecha y hora del último reporte
+    const lastReportDate = latestMonitoring ? new Date(latestMonitoring.datetime).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : '--';
 
     return (
-        <RouteLayout title="Dashboard" icon={null} headerItem={null}>
+        <RouteLayout title="Dashboard" icon={<IconTools />} headerItem={null}>
             <div className="p-6 space-y-6">
                 {/* Selector de Colonia */}
                 <div className="mb-6">
                     <select
-                        className="w-full p-2 rounded-lg bg-gray-800 text-white border border-gray-700"
+                        className="w-full p-2 rounded-lg bg-orange-200/80 text-orange-900 font-bold border border-orange-400"
                         value={selectedColony || ''}
                         onChange={e => setSelectedColony(String(e.target.value))}
                     >
@@ -84,55 +79,89 @@ function Dashboard() {
 
                 {/* Métricas Principales */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700 flex flex-col items-center">
-                        <span className="text-gray-400">Temperatura</span>
-                        <span className="text-2xl text-white font-bold">{latestMonitoring ? latestMonitoring.colony_temperature + '°C' : '--'}</span>
+                    <div className="bg-orange-300/80 p-4 rounded-lg border border-orange-400 shadow-lg flex flex-col items-center">
+                        <span className="text-orange-900 font-bold">Temp. Colonia</span>
+                        <span className="text-2xl text-orange-900 font-bold">{latestMonitoring ? latestMonitoring.colony_temperature + '°C' : '--'}</span>
+                        <span className="text-xs text-orange-800 mt-1">{lastReportDate}</span>
                     </div>
-                    <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700 flex flex-col items-center">
-                        <span className="text-gray-400">Humedad</span>
-                        <span className="text-2xl text-white font-bold">{latestMonitoring ? latestMonitoring.colony_humidity + '%' : '--'}</span>
+                    <div className="bg-orange-300/80 p-4 rounded-lg border border-orange-400 shadow-lg flex flex-col items-center">
+                        <span className="text-orange-900 font-bold">Temp. Ambiente</span>
+                        <span className="text-2xl text-orange-900 font-bold">{latestMonitoring ? latestMonitoring.ambient_temperature + '°C' : '--'}</span>
+                        <span className="text-xs text-orange-800 mt-1">{lastReportDate}</span>
                     </div>
-                    <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700 flex flex-col items-center">
-                        <span className="text-gray-400">Peso</span>
-                        <span className="text-2xl text-white font-bold">{latestMonitoring ? latestMonitoring.weight + ' kg' : '--'}</span>
+                    <div className="bg-orange-300/80 p-4 rounded-lg border border-orange-400 shadow-lg flex flex-col items-center">
+                        <span className="text-orange-900 font-bold">Humedad Colonia</span>
+                        <span className="text-2xl text-orange-900 font-bold">{latestMonitoring ? latestMonitoring.colony_humidity + '%' : '--'}</span>
+                        <span className="text-xs text-orange-800 mt-1">{lastReportDate}</span>
                     </div>
-                    <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700 flex flex-col items-center">
-                        <span className="text-gray-400">Estado de Salud</span>
-                        <span className="text-2xl text-white font-bold">{latestStatus ? latestStatus.colony_health : '--'}</span>
+                    <div className="bg-orange-300/80 p-4 rounded-lg border border-orange-400 shadow-lg flex flex-col items-center">
+                        <span className="text-orange-900 font-bold">Humedad Ambiente</span>
+                        <span className="text-2xl text-orange-900 font-bold">{latestMonitoring ? latestMonitoring.ambient_humidity + '%' : '--'}</span>
+                        <span className="text-xs text-orange-800 mt-1">{lastReportDate}</span>
+                    </div>
+                    <div className="bg-orange-300/80 p-4 rounded-lg border border-orange-400 shadow-lg flex flex-col items-center">
+                        <span className="text-orange-900 font-bold">Peso</span>
+                        <span className="text-2xl text-orange-900 font-bold">{latestMonitoring ? latestMonitoring.weight + ' kg' : '--'}</span>
+                        <span className="text-xs text-orange-800 mt-1">{lastReportDate}</span>
+                    </div>
+                    <div className="bg-orange-300/80 p-4 rounded-lg border border-orange-400 shadow-lg flex flex-col items-center">
+                        <span className="text-orange-900 font-bold">Estado de Salud</span>
+                        <span className="text-2xl text-orange-900 font-bold">{latestStatus ? latestStatus.colony_health : '--'}</span>
+                        <span className="text-xs text-orange-800 mt-1">{latestStatus ? new Date(latestStatus.datetime).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : '--'}</span>
                     </div>
                 </div>
 
-                {/* Gráficos */}
-                <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Temperatura y Humedad */}
-                    <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700 col-span-2">
-                        <span className="text-white font-bold">Temperatura y Humedad</span>
+                {/* Gráfico de evolución del peso */}
+                <div className="mt-8">
+                    <div className="bg-orange-300/80 p-4 rounded-lg border border-orange-400 shadow-lg">
+                        <span className="text-orange-900 font-bold">Evolución del Peso</span>
                         <div className="h-72 mt-4">
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={monitoringData}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                                    <XAxis dataKey="datetime" stroke="#9CA3AF" tickFormatter={d => new Date(d).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} />
-                                    <YAxis stroke="#9CA3AF" />
-                                    <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '0.5rem' }} labelStyle={{ color: '#9CA3AF' }} />
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#FDE68A" />
+                                    <XAxis dataKey="datetime" stroke="#FB923C" tickFormatter={d => new Date(d).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} />
+                                    <YAxis stroke="#FB923C" />
+                                    <Tooltip contentStyle={{ backgroundColor: '#FFF7ED', border: '1px solid #FDBA74', borderRadius: '0.5rem', color: '#EA580C' }} labelStyle={{ color: '#FB923C' }} />
                                     <Legend />
-                                    <Line type="monotone" dataKey="colony_temperature" stroke="#3B82F6" name="Temperatura (°C)" />
-                                    <Line type="monotone" dataKey="colony_humidity" stroke="#10B981" name="Humedad (%)" />
+                                    <Line type="monotone" dataKey="weight" stroke="#F59E0B" name="Peso (kg)" />
                                 </LineChart>
                             </ResponsiveContainer>
                         </div>
                     </div>
-                    {/* Peso */}
-                    <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700">
-                        <span className="text-white font-bold">Evolución del Peso</span>
+                </div>
+
+                {/* Gráficos de temperatura y humedad */}
+                <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Temperatura */}
+                    <div className="bg-orange-300/80 p-4 rounded-lg border border-orange-400 shadow-lg">
+                        <span className="text-orange-900 font-bold">Temperatura (Colonia vs Ambiente)</span>
                         <div className="h-72 mt-4">
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={monitoringData}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                                    <XAxis dataKey="datetime" stroke="#9CA3AF" tickFormatter={d => new Date(d).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} />
-                                    <YAxis stroke="#9CA3AF" />
-                                    <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '0.5rem' }} labelStyle={{ color: '#9CA3AF' }} />
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#FDE68A" />
+                                    <XAxis dataKey="datetime" stroke="#FB923C" tickFormatter={d => new Date(d).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} />
+                                    <YAxis stroke="#FB923C" />
+                                    <Tooltip contentStyle={{ backgroundColor: '#FFF7ED', border: '1px solid #FDBA74', borderRadius: '0.5rem', color: '#EA580C' }} labelStyle={{ color: '#FB923C' }} />
                                     <Legend />
-                                    <Line type="monotone" dataKey="weight" stroke="#F59E0B" name="Peso (kg)" />
+                                    <Line type="monotone" dataKey="colony_temperature" stroke="#FB923C" name="Temp. Colonia (°C)" />
+                                    <Line type="monotone" dataKey="ambient_temperature" stroke="#F472B6" name="Temp. Ambiente (°C)" />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+                    {/* Humedad */}
+                    <div className="bg-orange-300/80 p-4 rounded-lg border border-orange-400 shadow-lg">
+                        <span className="text-orange-900 font-bold">Humedad (Colonia vs Ambiente)</span>
+                        <div className="h-72 mt-4">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={monitoringData}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#FDE68A" />
+                                    <XAxis dataKey="datetime" stroke="#FB923C" tickFormatter={d => new Date(d).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} />
+                                    <YAxis stroke="#FB923C" />
+                                    <Tooltip contentStyle={{ backgroundColor: '#FFF7ED', border: '1px solid #FDBA74', borderRadius: '0.5rem', color: '#EA580C' }} labelStyle={{ color: '#FB923C' }} />
+                                    <Legend />
+                                    <Line type="monotone" dataKey="colony_humidity" stroke="#10B981" name="Humedad Colonia (%)" />
+                                    <Line type="monotone" dataKey="ambient_humidity" stroke="#F59E42" name="Humedad Ambiente (%)" />
                                 </LineChart>
                             </ResponsiveContainer>
                         </div>

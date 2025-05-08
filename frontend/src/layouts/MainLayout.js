@@ -2,7 +2,6 @@ import { IconReportMedical, IconTools, IconBuildingStore, IconBrandProducthunt, 
 import React from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.jpg";
-import "./styles.css"
 import client from "../axiosConfig";
 import { useSession } from '../context/sessionContext';
 const sidebarList = [
@@ -52,29 +51,26 @@ const MainLayout = () => {
     }
 
     return (
-        <div className="main-layout-container">
-            <div className="sidebar bg-gray-800 text-white">
-                <div className="logo-container flex items-center justify-center py-4">
-                    <img src={logo} alt="Logo" className="logo" />
+        <div className="main-layout-container min-h-screen flex bg-gradient-to-br from-orange-300 via-orange-400 to-yellow-200">
+            <div className="sidebar w-64 bg-gradient-to-b from-orange-400 via-orange-300 to-yellow-200 border-orange-400 text-white shadow-xl min-h-screen flex flex-col">
+                <div className="logo-container flex items-center justify-center py-6">
+                    <img src={logo} alt="Logo" className="w-24 h-auto rounded-xl shadow-md border-2 border-orange-400 mb-8 mx-auto" />
                 </div>
-                <ul className="sidebar-list space-y-2">
+                <ul className="sidebar-list space-y-2 px-2 text-orange-800 font-bold">
                     {sidebarList.map((item) => (
-                        <li key={item.path} onClick={() => navigate(item.path)} className={`sidebar-item p-2 cursor-pointer hover:bg-gray-700 ${pathname === item.path ? "active" : ""}`}>
-                            <div className="flex items-center space-x-2">
-                                {item.icon}
-                                <span>{item.name}</span>
-                            </div>
+                        <li key={item.path} onClick={() => navigate(item.path)} className={`sidebar-item p-3 rounded-lg cursor-pointer transition-all flex items-center gap-2 
+                            ${pathname === item.path ? "bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-400 font-bold scale-105 text-orange-900 shadow-md" : "hover:bg-orange-500 hover:text-orange-600 hover:shadow"}`}>
+                            {item.icon}
+                            <span>{item.name}</span>
                         </li>
                     ))}
-                    <li onClick={handleLogout} className="sidebar-item p-2 cursor-pointer hover:bg-gray-700">
-                        <div className="flex items-center space-x-2">
-                            <IconLogout />
-                            <span>Cerrar Sesión</span>
-                        </div>
+                    <li onClick={handleLogout} className="sidebar-item p-3 rounded-lg cursor-pointer hover:bg-orange-500 hover:text-orange-600 hover:shadow transition-all flex items-center gap-2">
+                        <IconLogout />
+                        <span>Cerrar Sesión</span>
                     </li>
                 </ul>
             </div>
-            <div className="content bg-gray-100">
+            <div className="content flex-1 bg-gradient-to-br from-orange-100 via-orange-200 to-yellow-100 p-6 overflow-y-auto">
                 <Outlet />
             </div>
         </div>

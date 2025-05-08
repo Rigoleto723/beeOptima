@@ -1,6 +1,5 @@
 import { IconPencil, IconPlus, IconTrash, IconBuildingStore, IconRotateClockwise } from '@tabler/icons-react';
 import React, { useState, useEffect } from 'react';
-import './styles.css';
 import ConfirmationModal from '../components/ConfirmationModal';
 import GeneralModal from '../components/GeneralModal';
 import RouteLayout from '../layouts/RouteLayout';
@@ -9,7 +8,7 @@ import useHive from '../hooks/useHive';
 
 const HeaderBtn = ({ onClick }) => (
     <div className='h-full flex flex-row items-center pr-4'>
-        <button className='add-button' onClick={onClick}><IconBuildingStore />Añadir Nueva Colmena</button>
+        <button className="flex items-center gap-2 px-5 py-2 rounded-lg bg-gradient-to-r from-orange-500 to-yellow-400 text-white font-semibold shadow-md hover:brightness-110 hover:scale-105 transition-all duration-200" onClick={onClick}><IconBuildingStore />Añadir Nueva Colmena</button>
     </div>
 )
 
@@ -67,115 +66,109 @@ function Hives() {
     };
 
     return (
-    <div>
-        <RouteLayout title='Lista de Colmenas' icon={<IconBuildingStore />} headerItem={<HeaderBtn onClick={() => setShowModalCreatedHive(true)} />}>
-            <table className="equipment-table">
-                <thead>
-                <tr>
-                    <th>Nombre Colmena</th>
-                    <th>Localización</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody>
-                    {hives.map(item => (
-                        <tr key={item.id}>
-                            <td className="type-column">
-                                <span className="type-text">{item.name}</span>
-                            </td>
-                            <td className="type-column">
-                                {item.location && item.location.length > 0 ? (
-                                        <span className="type-text">{item.location}</span>
-                                ) : (
-                                        <span className="type-text">Sin Información</span>
-                                )}
-                            </td>
-                            <td className="type-column">
-                                    <div className="type-action-buttons">
-                                        <button onClick={() => {
-                                            setShowModalUpdateHive(true); 
-                                            setId(item.id); 
-                                            setName(item.name); 
-                                            setLocation(item.location); 
-                                            }} className="edit-button" >
-                                            <IconPencil />
-                                        </button>
-                                        <button className="delete-button" onClick={() => openDeleteModal(item.id, item.name)}>
-                                            <IconTrash />
-                                        </button>
-                                    </div>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </RouteLayout>
-        <GeneralModal
-            isOpen={showModalCreatedHive}
-            onClose={() => setShowModalCreatedHive(false)}
-            title="Crear Colmena"
-            footerActions={
-                <button
-                    type="button"
-                    onClick={handleCreateHive}
-                >
-                Crear
-                </button>}
-        >
+        <div className="h-full">
+            <RouteLayout title='Lista de Colmenas' icon={<IconBuildingStore />} headerItem={<HeaderBtn onClick={() => setShowModalCreatedHive(true)} />}>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full rounded-xl shadow-lg bg-orange-300/80 border border-orange-400">
+                        <thead>
+                            <tr className="bg-gradient-to-r from-orange-400 via-orange-300 to-orange-200 text-orange-900 uppercase text-sm">
+                                <th className="px-4 py-3 text-left">Nombre Colmena</th>
+                                <th className="px-4 py-3 text-left">Localización</th>
+                                <th className="px-4 py-3 text-left">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {hives.map(item => (
+                                <tr key={item.id} className="even:bg-orange-50 hover:bg-orange-100 transition-colors">
+                                    <td className="px-4 py-3 text-gray-900 font-medium">{item.name}</td>
+                                    <td className="px-4 py-3 text-gray-900">{item.location && item.location.length > 0 ? item.location : <span className='text-gray-400'>Sin Información</span>}</td>
+                                    <td className="px-4 py-3">
+                                        <div className="flex gap-2">
+                                            <button onClick={() => {
+                                                setShowModalUpdateHive(true);
+                                                setId(item.id);
+                                                setName(item.name);
+                                                setLocation(item.location);
+                                            }} className="p-2 rounded-lg bg-gradient-to-r from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600 text-white shadow transition-transform hover:scale-105" title="Editar">
+                                                <IconPencil size={18} />
+                                            </button>
+                                            <button className="p-2 rounded-lg bg-gradient-to-r from-red-400 to-pink-400 hover:from-red-500 hover:to-pink-500 text-white shadow transition-transform hover:scale-105" onClick={() => openDeleteModal(item.id, item.name)} title="Eliminar">
+                                                <IconTrash size={18} />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </RouteLayout>
+            <GeneralModal
+                isOpen={showModalCreatedHive}
+                onClose={() => setShowModalCreatedHive(false)}
+                title="Crear Colmena"
+                footerActions={
+                    <button
+                        type="button"
+                        onClick={handleCreateHive}
+                    >
+                        Crear
+                    </button>}
+            >
                 <div>
                     <label>Nombre de la Colmena</label>
-                    <input 
-                        type="text" 
-                        value={name} 
+                    <input
+                        type="text"
+                        value={name}
                         onChange={(e) => setName(e.currentTarget.value)}
                     />
                 </div>
                 <div>
                     <label>Localización</label>
-                    <input 
-                        type="text" 
-                        value={location} 
+                    <input
+                        type="text"
+                        value={location}
                         onChange={(e) => setLocation(e.currentTarget.value)}
                     />
                 </div>
-        </GeneralModal>
-        <GeneralModal
-            isOpen={ShowModalUpdateHive}
-            onClose={() => setShowModalUpdateHive(false)}
-            title="Editar Colmena"
-            footerActions={
-                <button
-                    type="button"
-                    onClick={handleUpdateHive}
-                >
-                Actualizar
-                </button>}
-        >
+            </GeneralModal>
+            <GeneralModal
+                isOpen={ShowModalUpdateHive}
+                onClose={() => setShowModalUpdateHive(false)}
+                title="Editar Colmena"
+                footerActions={
+                    <button
+                        type="button"
+                        onClick={handleUpdateHive}
+                    >
+                        Actualizar
+                    </button>}
+            >
                 <div>
                     <label>Nombre de la Colmena</label>
-                    <input 
-                        type="text" 
-                        value={name} 
+                    <input
+                        type="text"
+                        value={name}
                         onChange={(e) => setName(e.currentTarget.value)}
                     />
                 </div>
                 <div>
                     <label>Localización</label>
-                    <input 
-                        type="text" 
-                        value={location} 
+                    <input
+                        type="text"
+                        value={location}
                         onChange={(e) => setLocation(e.currentTarget.value)}
                     />
                 </div>
-        </GeneralModal>
-        <ConfirmationModal
-            show={showModalDeleted}
-            onClose={() => setShowModalDeleted(false)}
-            onConfirm={handleDelete}
-            title="Confirmar Eliminación"
-            body={`¿Está seguro que desea eliminar el elemento "${name}"?`}
-        />
-    </div>
+            </GeneralModal>
+            <ConfirmationModal
+                show={showModalDeleted}
+                onClose={() => setShowModalDeleted(false)}
+                onConfirm={handleDelete}
+                title="Confirmar Eliminación"
+                body={`¿Está seguro que desea eliminar el elemento "${name}"?`}
+            />
+        </div>
     );
 }
 

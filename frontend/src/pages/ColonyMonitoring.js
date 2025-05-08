@@ -4,7 +4,6 @@ import { utils, writeFile } from 'xlsx';
 import { useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import './styles.css';
 import ConfirmationModal from '../components/ConfirmationModal';
 import GeneralModal from '../components/GeneralModal';
 import RouteLayout from '../layouts/RouteLayout';
@@ -15,9 +14,9 @@ import client from "../axiosConfig";
 
 
 const HeaderBtn = ({ onCreate, onDownload }) => (
-    <div className='header-buttons-container'>
-        <button className='add-button' onClick={onCreate}><IconBuildingStore />Añadir Nuevo Registro</button>
-        <button className='add-button' onClick={onDownload}><IconBuildingStore />Descargar Reporte</button>
+    <div className='h-full flex flex-row items-center pr-4 gap-4'>
+        <button className="flex items-center gap-2 px-5 py-2 rounded-lg bg-gradient-to-r from-orange-500 to-yellow-400 text-white font-semibold shadow-md hover:brightness-110 hover:scale-105 transition-all duration-200" onClick={onCreate}><IconBuildingStore />Añadir Nuevo Registro</button>
+        <button className="flex items-center gap-2 px-5 py-2 rounded-lg bg-gradient-to-r from-orange-500 to-yellow-400 text-white font-semibold shadow-md hover:brightness-110 hover:scale-105 transition-all duration-200" onClick={onDownload}><IconBuildingStore />Descargar Reporte</button>
     </div>
 )
 
@@ -153,49 +152,45 @@ function ColonyMonitoring() {
     };
 
     return (
-        <div>
-            <RouteLayout title='Lista de Colonias' icon={<IconBuildingStore />} headerItem={<HeaderBtn onCreate={() => setShowModalCreateMonitoring(true)} onDownload={handleDownloadReport} />}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-white/10 backdrop-blur-lg rounded-xl shadow-lg border border-white/20">
+        <div className="h-full">
+            <RouteLayout title='Monitoreo de Colonias' icon={<IconBuildingStore />} headerItem={<HeaderBtn onCreate={() => setShowModalCreateMonitoring(true)} onDownload={handleDownloadReport} />}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-orange-300/80 backdrop-blur-lg rounded-xl shadow-lg border border-orange-400 mb-8">
                     <div className="space-y-4">
                         <div className="flex flex-col">
-                            <h3 className="text-sm font-medium text-gray-400 mb-1">Colmena:</h3>
-                            <label className="text-lg font-semibold text-white">
+                            <h3 className="text-sm font-medium text-orange-500 mb-1">Colmena:</h3>
+                            <label className="text-lg font-semibold text-orange-900">
                                 {colonyStatus ? colonyStatus.colony_name : 'Datos no disponibles'}
                             </label>
                         </div>
-
                         <div className="flex flex-col">
-                            <h3 className="text-sm font-medium text-gray-400 mb-1">Colonia:</h3>
-                            <label className="text-lg font-semibold text-white">
+                            <h3 className="text-sm font-medium text-orange-500 mb-1">Colonia:</h3>
+                            <label className="text-lg font-semibold text-orange-900">
                                 {colonyStatus ? colonyStatus.colony : 'Datos no disponibles'}
                             </label>
                         </div>
-
                         <div className="flex flex-col">
-                            <h3 className="text-sm font-medium text-gray-400 mb-1">Estado de Salud:</h3>
+                            <h3 className="text-sm font-medium text-orange-500 mb-1">Estado de Salud:</h3>
                             <label className={`text-lg font-semibold ${colonyStatus ?
-                                colonyStatus.colony_health === "Saludable" ? 'text-green-400' :
-                                    colonyStatus.colony_health === "Débil" ? 'text-yellow-400' :
-                                        'text-red-400'
+                                colonyStatus.colony_health === "Saludable" ? 'text-green-500' :
+                                    colonyStatus.colony_health === "Débil" ? 'text-yellow-600' :
+                                        'text-red-500'
                                 : 'text-gray-400'
                                 }`}>
                                 {colonyStatus ? colonyStatus.colony_health : 'Datos no disponibles'}
                             </label>
                         </div>
                     </div>
-
                     <div className="space-y-4">
                         <div className="flex flex-col">
-                            <h3 className="text-sm font-medium text-gray-400 mb-1">Número de Abejas:</h3>
-                            <label className="text-lg font-semibold text-white">
+                            <h3 className="text-sm font-medium text-orange-500 mb-1">Número de Abejas:</h3>
+                            <label className="text-lg font-semibold text-orange-900">
                                 {colonyStatus ? colonyStatus.num_of_bees.toLocaleString() : 'Datos no disponibles'}
                             </label>
                         </div>
-
                         <div className="flex flex-col">
-                            <h3 className="text-sm font-medium text-gray-400 mb-1">Reina Presente:</h3>
-                            <label className={`text-lg font-semibold text-white ${colonyStatus ?
-                                colonyStatus.queen_present ? 'text-green-400' : 'text-red-400'
+                            <h3 className="text-sm font-medium text-orange-500 mb-1">Reina Presente:</h3>
+                            <label className={`text-lg font-semibold ${colonyStatus ?
+                                colonyStatus.queen_present ? 'text-green-500' : 'text-red-500'
                                 : 'text-gray-400'
                                 }`}>
                                 {colonyStatus ? (colonyStatus.queen_present ? 'Sí' : 'No') : 'Datos no disponibles'}
@@ -203,90 +198,57 @@ function ColonyMonitoring() {
                         </div>
                     </div>
                 </div>
-                <table className="equipment-table">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Colonia</th>
-                            <th>Temperatura de la Colonia</th>
-                            <th>Humedad de la Colonia</th>
-                            <th>Temperatura Ambiente</th>
-                            <th>Humedad Ambiente</th>
-                            <th>Peso</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {monitoring.map(item => (
-                            <tr key={item.id}>
-                                <td className="type-column">
-                                    <span className="type-text">{item.datetime}</span>
-                                </td>
-                                <td className="type-column">
-                                    <span className="type-text">{item.colony}</span>
-                                </td>
-                                <td className="type-column">
-                                    {item.colony_temperature ? (
-                                        <span className="type-text">{item.colony_temperature}</span>
-                                    ) : (
-                                        <span className="type-text">Sin Información</span>
-                                    )}
-                                </td>
-                                <td className="type-column">
-                                    {item.colony_humidity ? (
-                                        <span className="type-text">{item.colony_humidity}</span>
-                                    ) : (
-                                        <span className="type-text">Sin Información</span>
-                                    )}
-                                </td>
-                                <td className="type-column">
-                                    {item.ambient_temperature ? (
-                                        <span className="type-text">{item.ambient_temperature}</span>
-                                    ) : (
-                                        <span className="type-text">Sin Información</span>
-                                    )}
-                                </td>
-                                <td className="type-column">
-                                    {item.ambient_humidity ? (
-                                        <span className="type-text">{item.ambient_humidity}</span>
-                                    ) : (
-                                        <span className="type-text">Sin Información</span>
-                                    )}
-                                </td>
-                                <td className="type-column">
-                                    {item.weight ? (
-                                        <span className="type-text">{item.weight}</span>
-                                    ) : (
-                                        <span className="type-text">Sin Información</span>
-                                    )}
-                                </td>
-                                <td className="type-column">
-                                    <div className="type-action-buttons">
-                                        <button onClick={() => {
-                                            setShowModalUpdateMonitoring(true);
-                                            setId(item.id);
-                                            setDate(item.datetime);
-                                            setColonyTemperature(item.colony_temperature);
-                                            setColonyHumidity(item.colony_humidity);
-                                            setAmbientTemperature(item.ambient_temperature);
-                                            setAmbientHumidity(item.ambient_humidity);
-                                            setWeight(item.weight);
-                                        }} className="edit-button" >
-                                            <IconPencil />
-                                        </button>
-                                        <button className="delete-button" onClick={() => {
-                                            setId(item.id);
-                                            setShowModalDeleted(true);
-
-                                        }}>
-                                            <IconTrash />
-                                        </button>
-                                    </div>
-                                </td>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full rounded-xl shadow-lg bg-orange-300/80 border border-orange-400">
+                        <thead>
+                            <tr className="bg-gradient-to-r from-orange-400 via-orange-300 to-orange-200 text-orange-900 uppercase text-sm">
+                                <th className="px-4 py-3 text-left">Fecha</th>
+                                <th className="px-4 py-3 text-left">Colonia</th>
+                                <th className="px-4 py-3 text-left">Temperatura de la Colonia</th>
+                                <th className="px-4 py-3 text-left">Humedad de la Colonia</th>
+                                <th className="px-4 py-3 text-left">Temperatura Ambiente</th>
+                                <th className="px-4 py-3 text-left">Humedad Ambiente</th>
+                                <th className="px-4 py-3 text-left">Peso</th>
+                                <th className="px-4 py-3 text-left">Acciones</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {monitoring.map(item => (
+                                <tr key={item.id} className="even:bg-orange-50 hover:bg-orange-100 transition-colors">
+                                    <td className="px-4 py-3 text-gray-900">{item.datetime}</td>
+                                    <td className="px-4 py-3 text-gray-900">{item.colony}</td>
+                                    <td className="px-4 py-3 text-gray-900">{item.colony_temperature ? item.colony_temperature : <span className="text-gray-400">Sin Información</span>}</td>
+                                    <td className="px-4 py-3 text-gray-900">{item.colony_humidity ? item.colony_humidity : <span className="text-gray-400">Sin Información</span>}</td>
+                                    <td className="px-4 py-3 text-gray-900">{item.ambient_temperature ? item.ambient_temperature : <span className="text-gray-400">Sin Información</span>}</td>
+                                    <td className="px-4 py-3 text-gray-900">{item.ambient_humidity ? item.ambient_humidity : <span className="text-gray-400">Sin Información</span>}</td>
+                                    <td className="px-4 py-3 text-gray-900">{item.weight ? item.weight : <span className="text-gray-400">Sin Información</span>}</td>
+                                    <td className="px-4 py-3">
+                                        <div className="flex gap-2">
+                                            <button onClick={() => {
+                                                setShowModalUpdateMonitoring(true);
+                                                setId(item.id);
+                                                setDate(item.datetime);
+                                                setColonyTemperature(item.colony_temperature);
+                                                setColonyHumidity(item.colony_humidity);
+                                                setAmbientTemperature(item.ambient_temperature);
+                                                setAmbientHumidity(item.ambient_humidity);
+                                                setWeight(item.weight);
+                                            }} className="p-2 rounded-lg bg-gradient-to-r from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600 text-white shadow transition-transform hover:scale-105" title="Editar">
+                                                <IconPencil size={18} />
+                                            </button>
+                                            <button className="p-2 rounded-lg bg-gradient-to-r from-red-400 to-pink-400 hover:from-red-500 hover:to-pink-500 text-white shadow transition-transform hover:scale-105" onClick={() => {
+                                                setId(item.id);
+                                                setShowModalDeleted(true);
+                                            }} title="Eliminar">
+                                                <IconTrash size={18} />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </RouteLayout>
             <GeneralModal
                 isOpen={showModalCreatedMonitoring}
